@@ -2,7 +2,7 @@
 
 **一个 HTML 文件的六级备考全套**——双击打开就能用，不联网、不装环境、不注册账号。
 
-[![翻译 33 套](https://img.shields.io/badge/翻译-33套-3b5bdb)](#) [![写作 33 套](https://img.shields.io/badge/写作-33套-7c3aed)](#) [![词汇 2097 词](https://img.shields.io/badge/词汇-2097词-16a34a)](#) [![离线可用](https://img.shields.io/badge/双击即用-完全离线-d97706)](#)
+[![翻译 33 套](https://img.shields.io/badge/翻译-33套-3b5bdb)](#) [![写作 33 套](https://img.shields.io/badge/写作-33套-7c3aed)](#) [![选词填空 33 套](https://img.shields.io/badge/选词填空-33套-0d9488)](#) [![词汇 2551 词](https://img.shields.io/badge/词汇-2551词-16a34a)](#) [![离线可用](https://img.shields.io/badge/双击即用-完全离线-d97706)](#)
 
 ---
 
@@ -16,7 +16,11 @@
 
 ![写作对照](docs/screenshots/writing.png)
 
-**打字背诵** —— 只给你中文释义，把单词打出来。**连续两次无提示打对才算掌握**；打错了排队尾再来，空回车直接跳下一个。2097 个词（超纲词 263 + C1–C2 高频 204 + 考纲高频 1834，去重合并）全靠手感记。
+**选词填空 · 偷分心法** —— 这道题全卷性价比最低（每空才 0.5%），所以模块一上来就先教你怎么"偷"：先标词性降维成 3 选 1、再按语法槽位对号入座、最后靠搭配和语义色彩锁定。33 套 330 个答案的词性分布直接画给你（动词 108 / 名词 100 / 形容词 87 / 副词 35——背下这个比例就是先验开局）。每套配可交互练习：点选词填空、判分看每空的竞争词淘汰理由，还有 5 个干扰词的陷阱复盘。
+
+![选词填空](docs/screenshots/banked.png)
+
+**打字背诵** —— 只给你中文释义，把单词打出来。**连续两次无提示打对才算掌握**；打错了排队尾再来，空回车直接跳下一个。2551 个词（超纲词 263 + C1–C2 高频 204 + 考纲高频 1834 + 选词填空词池 454，去重合并）全靠手感记。
 
 ![打字背诵](docs/screenshots/type.png)
 
@@ -49,6 +53,7 @@ git clone https://github.com/lii-lii321/cet6-exam-review.git
 ├── build.py             # 构建：注入 JSON → 成品 HTML
 ├── parse_cet6.py        # 翻译 PDF 解析 → data.json（180 句）
 ├── parse_writing.py     # 写作 PDF 解析 → writing.json
+├── parse_banked.py      # 选词填空 PDF 解析 → banked.json
 ├── parse_vocab.py       # 词表解析 + 三表去重 → vocab.json
 ├── screenshot.py        # Edge headless 批量截图（README 配图）
 ├── smoke.js             # 冒烟测试（node smoke.js 即可跑）

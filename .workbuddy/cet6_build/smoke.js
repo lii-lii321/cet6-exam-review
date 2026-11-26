@@ -4,6 +4,7 @@ const html = fs.readFileSync(process.argv[2] || '../../六级翻译逐句对照.
 const dataMatch = html.match(/<script id="DATA"[^>]*>([\s\S]*?)<\/script>/);
 const vocabMatch = html.match(/<script id="VDATA"[^>]*>([\s\S]*?)<\/script>/);
 const wdataMatch = html.match(/<script id="WDATA"[^>]*>([\s\S]*?)<\/script>/);
+const bdataMatch = html.match(/<script id="BDATA"[^>]*>([\s\S]*?)<\/script>/);
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 
 function makeEl() {
@@ -39,6 +40,7 @@ global.setTimeout = (fn)=>0; global.clearTimeout = ()=>{};
 els['DATA'] = { textContent: dataMatch[1] };
 els['VDATA'] = { textContent: vocabMatch[1] };
 els['WDATA'] = { textContent: wdataMatch[1] };
+els['BDATA'] = { textContent: bdataMatch[1] };
 
 const testCode = `
   // 写作板块：切换、渲染、句数
@@ -46,6 +48,18 @@ const testCode = `
   if (!curW || curW.en_sents.length === 0) throw new Error('写作题未选中或范文为空');
   const wPaper = curW;
   setMode('vocab'); setMode('type'); setMode('pair'); // 写作下 pair 应映射到 writing 视图
+  // 选词填空板块：切换、渲染、判分逻辑
+  setSec('b');
+  if (!curB || curB.wordbank.length !== 15 || curB.analysis.length !== 10) throw new Error('选词填空题库/解析数量异常');
+  renderBanked(true);
+  const bq = curB.analysis[0];
+  BSTATE.filled[bq.num] = bq.answer.word;
+  BSTATE.judged = true;
+  renderBanked(true);
+  // 打字背诵词池 scope
+  TSTATE.scope = 'banked'; tBuildQueue();
+  if (TSTATE.queue.length !== VOCAB.banked.length) throw new Error('打字背诵选词词池数量异常');
+  TSTATE.scope = 'all';
   // 回翻译板块
   setSec('t');
   if (!cur) throw new Error('切回翻译后未选中');

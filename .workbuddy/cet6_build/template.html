@@ -193,6 +193,48 @@ body.blur-en .row.revealed .cell.en::after,body.blur-cn .row.revealed .cell.cn::
 .wpara:first-of-type{border-top:none}
 .badge-wc{display:inline-block;background:#16a34a;color:#fff;font-size:11.5px;font-weight:700;border-radius:5px;padding:2px 8px;margin-left:8px;vertical-align:2px}
 
+/* ---------- 选词填空 ---------- */
+#mode-banked{display:none}
+.bk-words{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.bk-word{border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;user-select:none;background:#fff;text-align:center;min-width:96px;transition:all .12s}
+.bk-word:hover{border-color:var(--accent)}
+.bk-word.sel{border-color:var(--accent);background:var(--accent-weak);box-shadow:0 0 0 2px #c7d2fe}
+.bk-word .bw{font-weight:700;font-size:14.5px}
+.bk-word .bp{font-size:11px;color:var(--text2);margin-top:1px}
+.bk-word.used{opacity:.38}
+.bk-word.ans{border-color:#16a34a}
+.bk-word.trap{border-color:#d97706;background:#fffaf0}
+.bk-word.right{border-color:#16a34a;background:#f0fdf4}
+.bk-word.wrong{border-color:#dc2626;background:#fef2f2}
+.bk-sent{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;line-height:2;position:relative}
+.bk-sent .qnum{position:absolute;left:-1px;top:-1px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;border-radius:8px 0 8px 0;padding:2px 8px}
+.bk-sent .qtext{padding-left:34px;font-size:14.5px}
+.slot{display:inline-block;min-width:64px;padding:1px 10px;border:1.5px dashed #94a3b8;border-radius:6px;text-align:center;font-weight:700;color:#64748b;cursor:pointer;background:#f8fafc;user-select:none;vertical-align:baseline}
+.slot:hover{border-color:var(--accent);color:var(--accent)}
+.slot.filled{border-style:solid;border-color:var(--accent);color:var(--accent);background:#eef2ff}
+.slot.ok{border-style:solid;border-color:#16a34a;color:#16a34a;background:#f0fdf4}
+.slot.bad{border-style:solid;border-color:#dc2626;color:#dc2626;background:#fef2f2;text-decoration:line-through}
+.slot .answ{color:#16a34a;font-size:11px;margin-left:4px;font-weight:600}
+.bk-verdict{font-size:12.5px;margin:4px 0 0 34px;color:var(--text2)}
+.bk-ana{display:none;background:#fafbfd;border-top:1px solid var(--border);margin-top:10px;padding:10px 8px 4px 2px;border-radius:6px}
+.bk-sent.judged .bk-ana{display:block}
+.bk-ana .arow{font-size:13px;line-height:1.7;color:#374151;padding:3px 0;border-top:1px dashed #eef0f3}
+.bk-ana .arow:first-child{border-top:none}
+.bk-ana .alab{font-weight:700;color:var(--accent);margin-right:6px}
+.bk-ana .alab.gr{color:var(--chip-qt)}
+.bk-ana .rvl{display:block;margin:2px 0 0 14px;color:#6b7280}
+.bk-ana .rvl b{color:#b45309}
+.tactic{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:14px}
+.tactic h3{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.tactic h3 .tno{background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.tactic p,.tactic li{font-size:13.5px;line-height:1.85;color:#374151}
+.tactic .ex{background:var(--accent-weak);border-radius:6px;padding:8px 12px;margin:6px 0;font-size:13px}
+.tactic .warn{background:#fef2f2;border-radius:6px;padding:8px 12px;margin:6px 0;font-size:13px}
+.bar-row{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px}
+.bar-row .bl{width:64px;font-weight:600;flex-shrink:0}
+.bar-row .vbar{flex:1}
+.bar-row .bv{width:110px;color:var(--text2);font-size:12px;flex-shrink:0;text-align:right}
+
 /* ---------- 侧栏收起 ---------- */
 #sidebar{transition:margin-left .22s ease}
 body.sb-hidden #sidebar{margin-left:-281px}
@@ -217,6 +259,7 @@ body.sb-hidden #sidebar{margin-left:-281px}
   <div class="seg" id="sec-seg">
     <button class="btn on" data-sec="t" id="sec-t">翻译</button>
     <button class="btn" data-sec="w" id="sec-w">写作</button>
+    <button class="btn" data-sec="b" id="sec-b">选词填空</button>
   </div>
   <input id="search" type="text" placeholder="搜索主题，如：养老 / 航天…">
   <div id="paper-list"></div>
@@ -252,6 +295,7 @@ body.sb-hidden #sidebar{margin-left:-281px}
     <div id="mode-pair"></div>
     <div id="mode-full"></div>
     <div id="mode-writing"></div>
+    <div id="mode-banked"></div>
     <div id="mode-vocab"></div>
     <div id="mode-type"></div>
   </div></div>
@@ -260,10 +304,14 @@ body.sb-hidden #sidebar{margin-left:-281px}
 <script id="DATA" type="application/json">__DATA_JSON__</script>
 <script id="VDATA" type="application/json">__VOCAB_JSON__</script>
 <script id="WDATA" type="application/json">__WRITING_JSON__</script>
+<script id="BDATA" type="application/json">__BANKED_JSON__</script>
 <script>
 const DATA = JSON.parse(document.getElementById('DATA').textContent);
 const VOCAB = JSON.parse(document.getElementById('VDATA').textContent);
 const WRITING = JSON.parse(document.getElementById('WDATA').textContent);
+const BANKED_RAW = JSON.parse(document.getElementById('BDATA').textContent);
+const BANKED = BANKED_RAW.papers;
+VOCAB.banked = BANKED_RAW.wordPool.map((w,i)=>({...w, rank:i+1, freq:w.sets, gloss:w.gloss||''}));
 const TOTAL_SENTS = DATA.reduce((a,p)=>a+p.sentences.length,0);
 const $ = s=>document.querySelector(s);
 const esc = s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -298,12 +346,19 @@ function hiEn(plain){
   });
 }
 
-/* ---------- 侧栏（翻译 / 写作 双板块） ---------- */
-let SEC = 't';  // t=翻译 w=写作
+/* ---------- 侧栏（翻译 / 写作 / 选词填空 三板块） ---------- */
+let SEC = 't';  // t=翻译 w=写作 b=选词填空
 let curW = null; // 当前写作题
-function currentList(){ return SEC==='t' ? DATA : WRITING; }
-function doneKey(p){ return 'cet6_done_' + (SEC==='w'?'w_':'') + p.id; }
+let curB = null; // 当前选词填空题
+function currentList(){ return SEC==='t' ? DATA : SEC==='w' ? WRITING : BANKED; }
+function doneKey(p){ return 'cet6_done_' + (SEC==='w'?'w_':SEC==='b'?'b_':'') + p.id; }
 function isPaperDone(p){ return localStorage.getItem(doneKey(p))==='1'; }
+function secLabel(){ return SEC==='t' ? '' : SEC==='w' ? ' 写作' : ' 选词填空'; }
+function paperTheme(p){
+  if(SEC==='t') return p.theme;
+  if(SEC==='w') return (p.theme||'').slice(0,26)+'…';
+  return '词库 '+p.wordbank.length+' 词 · 短文 '+p.passage.filter(s=>s.lang==='en').length+' 段';
+}
 
 function buildSidebar(filter=''){
   const list = $('#paper-list'); list.innerHTML='';
@@ -315,11 +370,10 @@ function buildSidebar(filter=''){
     if(!ps.length) return;
     const h=document.createElement('div'); h.className='year-head'; h.textContent=y+' 年'; list.appendChild(h);
     ps.sort((a,b)=>a.month-b.month).forEach(p=>{
-      const active = SEC==='t' ? (cur&&cur.id===p.id) : (curW&&curW.id===p.id);
+      const active = (SEC==='t'&&cur&&cur.id===p.id)||(SEC==='w'&&curW&&curW.id===p.id)||(SEC==='b'&&curB&&curB.id===p.id);
       const it=document.createElement('div');
       it.className='paper-item'+(active?' active':'')+(isPaperDone(p)?' done':'');
-      const sub = SEC==='t' ? esc(p.theme) : '范文 '+p.word_count+' 词 · '+esc((p.theme||'').slice(0,22))+'…';
-      it.innerHTML='<span class="set">'+p.month+'月·第'+p.set+'套</span><span class="th">'+sub+'</span><span class="done-ico">✔</span>';
+      it.innerHTML='<span class="set">'+p.month+'月·第'+p.set+'套</span><span class="th">'+paperTheme(p)+'</span><span class="done-ico">✔</span>';
       it.dataset.id=p.id;
       it.onclick=()=>selectPaper(p.id);
       list.appendChild(it); shown++;
@@ -331,28 +385,30 @@ $('#search').oninput=e=>buildSidebar(e.target.value.trim());
 
 function setSec(s){
   SEC = s;
-  $('#sec-t').classList.toggle('on', s==='t');
-  $('#sec-w').classList.toggle('on', s==='w');
+  ['t','w','b'].forEach(x=>$('#sec-'+x).classList.toggle('on', s===x));
   const pool = currentList();
-  const curId = s==='t' ? (cur&&cur.id) : (curW&&curW.id);
+  const curId = s==='t' ? (cur&&cur.id) : s==='w' ? (curW&&curW.id) : (curB&&curB.id);
   const keep = pool.find(p=>p.id===curId);
   selectPaper((keep || pool[0]).id);
-  $('#search').placeholder = s==='t' ? '搜索主题，如：养老 / 航天…' : '搜索首句关键词…';
+  $('#search').placeholder = s==='t' ? '搜索主题，如：养老 / 航天…' : s==='w' ? '搜索首句关键词…' : '搜索年份或套数…';
 }
-$('#sec-t').onclick=()=>setSec('t'); $('#sec-w').onclick=()=>setSec('w');
+$('#sec-t').onclick=()=>setSec('t'); $('#sec-w').onclick=()=>setSec('w'); $('#sec-b').onclick=()=>setSec('b');
 
 /* ---------- 选题 ---------- */
 function selectPaper(id){
   const pool = currentList();
   const p = pool.find(x=>x.id===id); if(!p) return;
-  if(SEC==='t'){ cur = p; curW = null; } else { curW = p; cur = null; }
+  cur = curW = curB = null;
+  if(SEC==='t') cur = p; else if(SEC==='w') curW = p; else curB = p;
   location.hash = id;
   buildSidebar($('#search').value.trim());
   if(SEC==='t'){ renderPair(); renderFull(); }
-  else { renderWriting(); }
-  const themeTxt = SEC==='t' ? p.theme : (p.theme||'').slice(0,26)+'…';
-  $('#paper-title').innerHTML = p.year+'年'+p.month+'月 · 第'+p.set+'套'+(SEC==='w'?' 写作':'')
-    +' <small>'+esc(themeTxt)+'</small>'+(SEC==='w'&&p.word_count?'<span class="badge-wc">范文 '+p.word_count+' 词</span>':'');
+  else if(SEC==='w'){ renderWriting(); }
+  else { renderBanked(); }
+  $('#paper-title').innerHTML = p.year+'年'+p.month+'月 · 第'+p.set+'套'+secLabel()
+    +' <small>'+esc(paperTheme(p))+'</small>'
+    +(SEC==='w'&&p.word_count?'<span class="badge-wc">范文 '+p.word_count+' 词</span>':'')
+    +(SEC==='b'?'<span class="badge-wc">10 空 · 15 词</span>':'');
   $('#done-ck').checked = isPaperDone(p);
   $('#content').scrollTop=0;
   document.querySelectorAll('.row').forEach(r=>r.classList.remove('open'));
@@ -361,13 +417,13 @@ function selectPaper(id){
 $('#prev').onclick=()=>step(-1); $('#next').onclick=()=>step(1);
 function step(d){
   const pool = currentList();
-  const c = SEC==='t'?cur:curW;
+  const c = SEC==='t'?cur:SEC==='w'?curW:curB;
   const i = pool.indexOf(c); if(i<0) return;
   selectPaper(pool[(i+d+pool.length)%pool.length].id);
 }
 $('#done-ck').onchange=e=>{
-  if(SEC==='t'&&cur) localStorage.setItem(doneKey(cur), e.target.checked?'1':'0');
-  if(SEC==='w'&&curW) localStorage.setItem(doneKey(curW), e.target.checked?'1':'0');
+  const c = SEC==='t'?cur:SEC==='w'?curW:curB;
+  if(c) localStorage.setItem(doneKey(c), e.target.checked?'1':'0');
   buildSidebar($('#search').value.trim());
 };
 
@@ -461,27 +517,28 @@ let MODE = 'pair';
 function setMode(m){ MODE = m; refreshMode(); }
 function refreshMode(){
   const m = MODE;
-  const isW = SEC==='w';
-  const eff = (isW && (m==='pair'||m==='full')) ? 'writing' : m;  // 写作题用写作视图
+  const isW = SEC==='w', isB = SEC==='b';
+  const eff = ((isW||isB) && (m==='pair'||m==='full')) ? (isB?'banked':'writing') : m;
   ['pair','full','vocab','type'].forEach(x=>$('#m-'+x).classList.toggle('on',m===x));
   $('#mode-pair').style.display = eff==='pair'?'block':'none';
   $('#mode-full').style.display = eff==='full'?'block':'none';
   $('#mode-writing').style.display = eff==='writing'?'block':'none';
+  $('#mode-banked').style.display = eff==='banked'?'block':'none';
   $('#mode-vocab').style.display = m==='vocab'?'block':'none';
   $('#mode-type').style.display = m==='type'?'block':'none';
-  // 写作题时隐藏 对照/连读 两个按钮
   $('#m-pair').style.display = isW?'none':'';
   $('#m-full').style.display = isW?'none':'';
   document.querySelectorAll('.pair-only').forEach(el=>el.style.display = (eff==='pair'||eff==='full'||eff==='writing')?'':'none');
   $('#expand-all').style.display = eff==='pair'?'':'none';
   const pt=document.getElementById('paper-title');
-  const c = SEC==='t'?cur:curW;
+  const c = SEC==='t'?cur:SEC==='w'?curW:curB;
   if(c){
-    const themeTxt = SEC==='t' ? c.theme : (c.theme||'').slice(0,26)+'…';
-    pt.innerHTML = c.year+'年'+c.month+'月 · 第'+c.set+'套'+(SEC==='w'?' 写作':'')
-      +' <small>'+esc(themeTxt)+'</small>'+(SEC==='w'&&c.word_count?'<span class="badge-wc">范文 '+c.word_count+' 词</span>':'');
+    pt.innerHTML = c.year+'年'+c.month+'月 · 第'+c.set+'套'+secLabel()
+      +' <small>'+esc(paperTheme(c))+'</small>'
+      +(SEC==='w'&&c.word_count?'<span class="badge-wc">范文 '+c.word_count+' 词</span>':'')
+      +(SEC==='b'?'<span class="badge-wc">10 空 · 15 词</span>':'');
   }
-  pt.style.display = (m==='pair'||m==='full'||eff==='writing')?'':'none';
+  pt.style.display = (m==='pair'||m==='full'||eff==='writing'||eff==='banked')?'':'none';
   if(m==='vocab') renderVocab();
   if(m==='type') renderType();
 }
@@ -573,9 +630,141 @@ function renderWriting(){
     +'<div class="wsec"><h3>自检避坑</h3>'+renderSecItems(w.review||[], true)+'</div>';
 }
 
+/* ---------- 选词填空 ---------- */
+const BSTATE = {sel:null, filled:{}, judged:false};
+const POS_CLS = {'名词':'c-zg','动词':'c-yf','形容词':'c-jj','副词':'c-qt'};
+function ansMap(p){ const m={}; p.analysis.forEach(q=>m[q.num]=q.answer); return m; }
+function renderBanked(preserve){
+  const p=curB, host=$('#mode-banked');
+  if(!p){host.innerHTML='';return;}
+  if(!preserve){ BSTATE.sel=null; BSTATE.filled={}; BSTATE.judged=false; }
+  const am=ansMap(p);
+  // 心法卡（动态统计）
+  const dist={};
+  BANKED.forEach(pp=>pp.analysis.forEach(q=>{ if(q.answer){ const k=q.answer.pos.slice(0,3); dist[k]=(dist[k]||0)+1; }}));
+  const tot=Object.values(dist).reduce((a,b)=>a+b,0);
+  const barRow=(k,v)=>'<div class="bar-row"><span class="bl">'+k+'</span><div class="vbar"><i style="width:'+(v/tot*100)+'%"></i></div><span class="bv">'+v+' 空 / '+(v/BANKED.length).toFixed(1)+' 个每套</span></div>';
+  const tactic =
+    '<div class="tactic"><h3><span class="tno">0</span>先算账：这道题到底值多少分</h3>'
+    +'<p>选词填空 10 空，每空 <b>0.5%</b>（共 5%），是全卷性价比最低的题——同样时间花在仔细阅读上，回报是它的 4 倍。所以策略是：<b>限时 8 分钟、目标对 6 个</b>，绝不恋战。</p>'
+    +'<div style="margin:10px 0"><b style="font-size:13px">33 套真题 330 个答案的词性分布（背下这个比例，等于先验开局）：</b>'
+    +barRow('动词',dist['动词']||0)+barRow('名词',dist['名词']||0)+barRow('形容词',dist['形容词']||0)+barRow('副词',dist['副词']||0)
+    +'</div></div>'
+    +'<div class="tactic"><h3><span class="tno">1</span>第一步：给 15 个词标词性（30 秒，降维打击）</h3>'
+    +'<p>拿到题先别读文章！把 15 个词按 名词/动词/形容词/副词 分组写在题册上，多词性的全标。这一步之后，每个空从 <b>15 选 1</b> 变成 <b>3~4 选 1</b>——剩下的靠语义。</p>'
+    +'<div class="ex">本套：'+p.wordbank.map(w=>'<b>'+w.letter+' '+w.word+'</b>('+w.pos.join('/')+')').join(' ')+'</div>'
+    +'<p>一眼就能看出：正确答案往往「该词性的几个词 + 1 个干扰词」正好凑够空数——<b>用掉一个划掉一个</b>，做完 10 空剩 5 个干扰词，自动验收。</p></div>'
+    +'<div class="tactic"><h3><span class="tno">2</span>第二步：看空格前后，定语法槽位（不用读懂全文）</h3>'
+    +'<p>九成空看两三个词就够。高频槽位对照：</p>'
+    +'<li><b>冠词(a/an/the) + ＿ + 名词</b> → 形容词</li>'
+    +'<li><b>of / 介词 + ＿</b> → 名词（注意单复数线索 some、数词后可数复数）</li>'
+    +'<li><b>to + ＿ + 名词</b> → 动词原形；<b>情态动词 / 主语后</b> → 动词</li>'
+    +'<li><b>be ＿ with / be ＿ to do</b> → 形容词（看后面接 with 还是 to）</li>'
+    +'<li><b>完整句子两端 + ＿</b> → 副词（修饰整个谓语）</li>'
+    +'<p>本套 10 个空的槽位解析已放在每题下方——做完一题看一题，槽位感就是这么喂出来的。</p></div>'
+    +'<div class="tactic"><h3><span class="tno">3</span>第三步：锁搭配与语义色彩（这时候才需要读懂那个句子）</h3>'
+    +'<li><b>固定搭配优先</b>：be synonymous with、burning hot、a land of extremes、stimulate one\'s interest——搭配一锁定，词自己跳出来。</li>'
+    +'<li><b>褒贬一致</b>：上下文是负面视角就别填褒义词（这正是 unique 抢 flat 位置的经典陷阱）。</li>'
+    +'<li><b>前伏笔后照应</b>：freezing 对 burning、lifeless 对 overflowing——极端词找极端词。</li>'
+    +'<li><b>绝对级形容词（unique 等）不与 more 连用</b>，看到 more 直接排除。</li></div>'
+    +'<div class="tactic"><h3><span class="tno">4</span>考场战术：怎么"偷"这 5 分</h3>'
+    +'<div class="warn"><b>做题顺序</b>：把选词填空放到<b>最后</b>做（听力 + 阅读 + 翻译写完再说）。它每空 0.5%，别让它偷走你做仔细阅读的时间。</div>'
+    +'<li><b>8 分钟到点</b>：没填的空按「剩余词里词性对的」蒙一个——词性对就有 40~60% 命中率，空着才是 0%。</li>'
+    +'<li><b>每词只能用一次</b>：某空纠结时，先跳过；等 10 空填完，用「剩余 5 个干扰词反推」——如果剩 2 个名词而只差 1 个名词空，说明有一空错了，回头重看。</li>'
+    +'<li><b>训练方法</b>：每套题先按三步法限时做，再点「判分」对照解析——重点看竞争词淘汰理由，那是命题人的出陷阱思路。</li></div>';
+  // 词库
+  const usedWords = Object.values(BSTATE.filled).map(x=>x.toLowerCase());
+  const words = p.wordbank.map(w=>{
+    let cls='bk-word';
+    if(BSTATE.sel===w.word) cls+=' sel';
+    if(usedWords.includes(w.word.toLowerCase())) cls+=' used';
+    if(BSTATE.judged){ if(w.used) cls+=' ans'; else cls+=' trap'; }
+    return '<div class="'+cls+'" data-w="'+esc(w.word)+'"><div class="bw">'+w.letter+' · '+esc(w.word)+'</div>'
+      +'<div class="bp">'+w.pos.join('/')+' · '+(w.used?'第'+w.used+'空答案':'干扰词')+'</div>'
+      +'<div style="font-size:11.5px;color:#4b5563;margin-top:2px">'+esc((w.gloss||'').slice(0,26))+'…</div></div>';
+  }).join('');
+  // 题目
+  const qs = p.analysis.slice().sort((a,b)=>a.num-b.num).map(q=>{
+    let sent = esc(q.sentence).replace(/‹(\d{2})›_*/g, (m,n)=>{
+      const f = BSTATE.filled[n];
+      let cls='slot';
+      if(BSTATE.judged) cls += f ? (f.toLowerCase()===am[n].word.toLowerCase()?' ok':' bad') : ' bad';
+      else if(f) cls+=' filled';
+      const show = f ? esc(f) : '‹'+n+'›';
+      const ansTag = (BSTATE.judged && (!f || f.toLowerCase()!==am[n].word.toLowerCase())) ? '<span class="answ">✓ '+esc(am[n].word)+'</span>' : '';
+      return '<span class="'+cls+'" data-n="'+n+'">'+show+ansTag+'</span>';
+    });
+    let ana='';
+    if(BSTATE.judged){
+      ana='<div class="bk-ana">'
+        +'<div class="arow"><span class="alab">答案</span>'+q.answer.letter+') '+esc(q.answer.word)+'（'+esc(q.answer.pos)+'）</div>'
+        +(q.slot?'<div class="arow"><span class="alab">词性槽</span>'+esc(q.slot)+'</div>':'')
+        +(q.basis?'<div class="arow"><span class="alab gr">依据</span>'+esc(q.basis)+'</div>':'')
+        +(q.rivals||[]).map(r=>'<div class="arow"><span class="alab gr">竞争词</span><b>'+esc(r.word)+'</b> '+esc(r.reason)+'</div>').join('')
+        +(q.trap?'<div class="arow"><span class="alab" style="color:#dc2626">易错</span>'+esc(q.trap)+'</div>':'')
+        +'</div>';
+    }
+    const my = BSTATE.filled[q.num];
+    const verdict = BSTATE.judged ? (my&&my.toLowerCase()===q.answer.word.toLowerCase()?'<div class="bk-verdict" style="color:#16a34a">✔ 本空正确</div>':'<div class="bk-verdict" style="color:#dc2626">✘ 本空' + (my?'填了 '+esc(my):'未填') + '</div>') : '';
+    return '<div class="bk-sent'+(BSTATE.judged?' judged':'')+'"><div class="qnum">第 '+q.num+' 空</div><div class="qtext">'+sent+'</div>'+verdict+ana+'</div>';
+  }).join('');
+  host.innerHTML =
+    '<div class="wdir"><div class="dlab">DIRECTIONS · 题目要求</div><p>'+esc(p.directions)+'</p></div>'
+    +tactic
+    +'<div class="wsec"><h3>词库 15 词 · 先标词性再动笔（点击选词 → 点空格填入）</h3><div class="bk-words" id="bkwords">'+words+'</div></div>'
+    +'<div class="wsec"><h3>练习 · 每空一填，判分看解析</h3>'+qs
+    +'<div style="display:flex;gap:10px;margin-top:12px">'
+    +'<button class="btn on" id="bk-judge">判分</button>'
+    +'<button class="btn" id="bk-reset">清空重填</button>'
+    +'<button class="btn" id="bk-reveal">直接看答案</button>'
+    +'</div></div>'
+    +'<div class="wsec"><h3>干扰词复盘 · 5 个没被选用的词为什么迷人</h3>'
+    +p.distractors.map(dt=>'<div class="wpara"><div class="wpn">'+esc(dt.word)+' · '+esc(dt.title)+'</div>'+esc(dt.body)+'</div>').join('')
+    +'</div>'
+    +'<div class="wsec"><h3>本篇真题高频词（点词加入打字背诵词池）</h3>'
+    +(p.hfw&&p.hfw.length? p.hfw.map((hw,idx)=>{
+        const known=mastered(hw.word);
+        return '<div class="witem"><span class="cefr-chip cc-'+hw.cefr+'" style="margin-right:8px">'+hw.cefr+'</span>'
+          +'<b style="cursor:pointer;'+(known?'color:#16a34a':'')+'" class="hfwword" data-w="'+esc(hw.word)+'">'+esc(hw.word)+'</b> '
+          +'<span style="color:#6b7280;font-size:12px">'+esc(hw.pos)+' '+esc(hw.gloss)+' · 本篇'+hw.here+'次 / 真题'+hw.freq+'句</span>'
+          +(known?' <span style="color:#16a34a;font-weight:700;font-size:12px">✔已掌握</span>':'')
+          +'</div>';
+      }).join('') : '<p>（无）</p>')
+    +'</div>'
+    +'<div class="wsec"><h3>全文主旨</h3><p>'+esc(p.gist||'')+'</p></div>';
+  // 事件
+  host.querySelectorAll('.bk-word').forEach(el=>{
+    el.onclick=()=>{
+      if(BSTATE.judged) return;
+      BSTATE.sel = el.dataset.w;
+      host.querySelectorAll('.bk-word').forEach(x=>x.classList.toggle('sel', x.dataset.w===BSTATE.sel));
+    };
+  });
+  host.querySelectorAll('.slot').forEach(el=>{
+    el.onclick=()=>{
+      if(BSTATE.judged) return;
+      const n=el.dataset.n;
+      if(BSTATE.sel){ BSTATE.filled[n]=BSTATE.sel; }
+      else { delete BSTATE.filled[n]; }
+      renderBanked(true);
+    };
+  });
+  $('#bk-judge').onclick=()=>{ BSTATE.judged=true; renderBanked(); };
+  $('#bk-reveal').onclick=()=>{ BSTATE.judged=true; p.analysis.forEach(q=>{ BSTATE.filled[q.num]=q.answer.word; }); renderBanked(); };
+  $('#bk-reset').onclick=()=>{ renderBanked(); };
+  host.querySelectorAll('.hfwword').forEach(el=>{
+    el.onclick=()=>{
+      const w=el.dataset.w;
+      setMastered(w, !mastered(w));
+      renderBanked();
+    };
+  });
+}
+function renderBankedKeepSel(){ /* 已由 renderBanked(true) 取代 */ }
+
 /* ---------- 词汇表 ---------- */
 const VSTATE = {tab:'over', q:'', known:'all', sort:'freq'};
-const VTABS = {over:'超纲词', c12:'C1–C2 高频词', kg:'考纲高频词'};
+const VTABS = {over:'超纲词', c12:'C1–C2 高频词', kg:'考纲高频词', banked:'选词填空词池'};
 function isKnown(tab, word){ return mastered(word); }
 function vprog(tab){
   const list=VOCAB[tab];
@@ -616,11 +805,11 @@ function renderVocab(){
     +(rows.length? rows.map(w=>{
         const k=isKnown(tab,w.word);
         return '<div class="vrow'+(k?' known':'')+'" data-w="'+esc(w.word)+'">'
-          +'<span class="rk">'+w.rank+'</span>'
+          +'<span class="rk">'+(w.rank||'')+'</span>'
           +'<span class="wd">'+esc(w.word)+'</span>'
-          +'<span class="cefr-chip cc-'+w.cefr+'">'+w.cefr+'</span>'
+          +'<span class="cefr-chip cc-'+w.cefr+'">'+(w.cefr||'')+'</span>'
           +'<span class="gl">'+esc(w.gloss)+'</span>'
-          +'<span class="fq">'+w.freq+' 句</span>'
+          +'<span class="fq">'+(w.freq!==undefined? w.freq+' 句' : (w.sets||'')+' 套真题')+'</span>'
           +'<span class="ok-ico">✔</span>'
           +'</div>';
       }).join('') : '<div class="empty-tip">没有匹配的单词</div>')
@@ -642,7 +831,10 @@ function renderVocab(){
 const TSTATE = {scope:'all', sort:'freq', onlyNew:true, queue:[], pos:0, streak:0,
                 sMastered:0, sWrong:0, revealing:false, revealWord:'', revealTimer:null, feedback:''};
 
-function tScopeList(){ return VOCAB.merged.filter(w=>TSTATE.scope==='all' || w.tags.includes(TSTATE.scope)); }
+function tScopeList(){
+  if(TSTATE.scope==='banked') return VOCAB.banked;
+  return VOCAB.merged.filter(w=>TSTATE.scope==='all' || w.tags.includes(TSTATE.scope));
+}
 function tBuildQueue(){
   let pool = tScopeList();
   if(TSTATE.onlyNew) pool = pool.filter(w=>!mastered(w.word));
@@ -662,7 +854,7 @@ function renderType(){
   host.innerHTML =
     '<div class="vtop">'
     +'<div class="vseg" id="tscope">'
-    +[['all','全部'],['超纲','超纲词'],['C1C2','C1–C2'],['考纲','考纲高频']].map(([v,l])=>'<button data-s="'+v+'" class="'+(TSTATE.scope===v?'on':'')+'">'+l+'</button>').join('')
+    +[['all','全部'],['超纲','超纲词'],['C1C2','C1–C2'],['考纲','考纲高频'],['banked','选词词池']].map(([v,l])=>'<button data-s="'+v+'" class="'+(TSTATE.scope===v?'on':'')+'">'+l+'</button>').join('')
     +'</div>'
     +'<div class="vseg" id="tsort">'
     +[['freq','按句频'],['rand','随机']].map(([v,l])=>'<button data-s="'+v+'" class="'+(TSTATE.sort===v?'on':'')+'">'+l+'</button>').join('')
@@ -696,9 +888,9 @@ function tUpdateCard(){
   const dots='<span class="tstreak"><i class="'+(TSTATE.streak>=1?'on':'')+'"></i><i class="'+(TSTATE.streak>=2?'on':'')+'"></i></span>';
   card.innerHTML =
     '<div class="tgloss">'+esc(w.gloss||'（无释义）')+'</div>'
-    +'<div class="tmeta"><span class="cefr-chip cc-'+w.cefr+'">'+w.cefr+'</span>'
-    +w.tags.map(t=>'<span class="chip '+(t==='超纲'?'c-qt':t==='C1C2'?'c-yw':'c-zg')+'">'+(t==='C1C2'?'C1–C2 高频':t)+'词'+'</span>').join('')
-    +'<span>真题 '+w.freq+' 句</span></div>'
+    +'<div class="tmeta"><span class="cefr-chip cc-'+w.cefr+'">'+(w.cefr||'')+'</span>'
+    +(w.tags?w.tags.map(t=>'<span class="chip '+(t==='超纲'?'c-qt':t==='C1C2'?'c-yw':'c-zg')+'">'+(t==='C1C2'?'C1–C2 高频':t)+'词'+'</span>').join(''):'')
+    +'<span>'+(w.freq?'真题 '+w.freq+' 句':'真题高频')+'</span></div>'
     +'<div class="tanswer'+(TSTATE.revealing?' show':'')+'" id="tans">'+(TSTATE.revealing? esc(TSTATE.revealWord||'') : '&nbsp;')+'</div>'
     +'<input class="tinput" id="tinput" placeholder="打出英文单词回车提交 · 空着直接回车=跳下一个" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">'
     +'<div class="tfeed'+(TSTATE.feedback.startsWith('✓')?' good':TSTATE.feedback.startsWith('✗')?' bad':TSTATE.feedback.startsWith('🎉')?' win':'')+'" id="tfeed">'+esc(TSTATE.feedback)+dots+'</div>'
@@ -755,14 +947,19 @@ function tReveal(msg, word){
 }
 
 /* ---------- 初始化 ---------- */
-$('#stat').textContent = '翻译 '+DATA.length+' 套 · 写作 '+WRITING.length+' 套 · 词汇 '+ VOCAB.merged.length;
-// URL 参数直达：?sec=w&mode=type&blur=en&expand=all&id=2023-12-1
+$('#stat').textContent = '翻译 '+DATA.length+' · 写作 '+WRITING.length+' · 选词 '+BANKED.length+' 套 · 词汇 '+ (VOCAB.merged.length+VOCAB.banked.length)+' 词';
+// URL 参数直达：?sec=b&mode=type&blur=en&expand=all&id=2023-12-1
 const QS = new URLSearchParams(location.search);
 const initial = location.hash.slice(1) || QS.get('id') || '';
-const inT = DATA.find(p=>p.id===initial);
-const inW = WRITING.find(p=>p.id===initial);
-if((QS.get('sec')==='w' && !inT) || (inW && !inT)){ SEC='w'; $('#sec-w').classList.add('on'); $('#sec-t').classList.remove('on'); }
-selectPaper((SEC==='t'?inT:inW) ? initial : (SEC==='w'?WRITING[0]:DATA[0]).id);
+const qsSec = QS.get('sec');
+if(qsSec==='w'||qsSec==='b'||qsSec==='t'){
+  SEC = qsSec;
+  ['t','w','b'].forEach(x=>$('#sec-'+x).classList.toggle('on', x===qsSec));
+} else if(initial){
+  SEC = WRITING.find(p=>p.id===initial)?'w':BANKED.find(p=>p.id===initial)?'b':'t';
+  ['t','w','b'].forEach(x=>$('#sec-'+x).classList.toggle('on', x===SEC));
+} else SEC='t';
+selectPaper(initial && currentList().find(p=>p.id===initial) ? initial : currentList()[0].id);
 if(QS.get('mode') && ['pair','full','vocab','type'].includes(QS.get('mode'))) setMode(QS.get('mode'));
 if(QS.get('blur')==='en'||QS.get('blur')==='cn') setBlur(QS.get('blur'));
 if(QS.get('expand')==='all'){
