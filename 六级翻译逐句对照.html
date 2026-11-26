@@ -658,6 +658,7 @@ function tToEnd(){ const w=TSTATE.queue.splice(TSTATE.pos,1)[0]; TSTATE.queue.pu
 
 function renderType(){
   const host=$('#mode-type');
+  if(!TSTATE.queue.length) tBuildQueue();  // 首次进入自动建队（否则显示空"全部掌握"）
   host.innerHTML =
     '<div class="vtop">'
     +'<div class="vseg" id="tscope">'
@@ -755,11 +756,19 @@ function tReveal(msg, word){
 
 /* ---------- 初始化 ---------- */
 $('#stat').textContent = '翻译 '+DATA.length+' 套 · 写作 '+WRITING.length+' 套 · 词汇 '+ VOCAB.merged.length;
-const initial = location.hash.slice(1);
+// URL 参数直达：?sec=w&mode=type&blur=en&expand=all&id=2023-12-1
+const QS = new URLSearchParams(location.search);
+const initial = location.hash.slice(1) || QS.get('id') || '';
 const inT = DATA.find(p=>p.id===initial);
 const inW = WRITING.find(p=>p.id===initial);
-if(inW){ SEC='w'; $('#sec-w').classList.add('on'); $('#sec-t').classList.remove('on'); selectPaper(initial); }
-else { selectPaper(inT ? initial : DATA[0].id); }
+if((QS.get('sec')==='w' && !inT) || (inW && !inT)){ SEC='w'; $('#sec-w').classList.add('on'); $('#sec-t').classList.remove('on'); }
+selectPaper((SEC==='t'?inT:inW) ? initial : (SEC==='w'?WRITING[0]:DATA[0]).id);
+if(QS.get('mode') && ['pair','full','vocab','type'].includes(QS.get('mode'))) setMode(QS.get('mode'));
+if(QS.get('blur')==='en'||QS.get('blur')==='cn') setBlur(QS.get('blur'));
+if(QS.get('expand')==='all'){
+  document.querySelectorAll('#mode-pair .row').forEach(r=>r.classList.add('open'));
+  $('#expand-all').textContent='收起全部解析';
+}
 </script>
 </body>
 </html>

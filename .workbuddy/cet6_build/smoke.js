@@ -50,6 +50,7 @@ const testCode = `
   setSec('t');
   if (!cur) throw new Error('切回翻译后未选中');
   setMode('pair'); setMode('full'); setMode('vocab'); setMode('type');
+  if (TSTATE.queue.length === 0) throw new Error('首次进入打字模式应自动建队');
   tBuildQueue();
   const w0 = TSTATE.queue[0];
   tWrong(w0);
