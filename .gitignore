@@ -1,0 +1,17 @@
+# PDF 原件不进仓库（版权内容，仅本地保存）
+*.pdf
+
+# WorkBuddy 内部工作日志
+.workbuddy/memory/
+.workbuddy/skills/
+
+# 提取/构建临时产物
+*.log
+.workbuddy/cet6_build/_check.js
+.workbuddy/cet6_build/writing_sample.md
+.workbuddy/cet6_build/extracted/*.log
+.workbuddy/cet6_build/extracted_writing/*.log
+
+# 系统文件
+Thumbs.db
+.DS_Store
